@@ -1,3 +1,5 @@
+import Pages.MainPage;
+import Pages.ToDoPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -16,8 +18,9 @@ import java.util.List;
 public class SeleniumTests {
 
     private WebDriver driver;
-    private WebDriverWait webDriverWait;
-    private Actions actions;
+    private MainPage mainPage;
+    private ToDoPage todoPage;
+
 
     @BeforeAll
     public static void setUpClass() {
@@ -29,35 +32,26 @@ public class SeleniumTests {
     @BeforeEach
     public void setUp() {
         driver = new EdgeDriver();
-        webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        actions = new Actions(driver);
+        mainPage = new MainPage(driver);
+        todoPage = new ToDoPage(driver);
     }
-
-/*    @Test
-    public void openGoogleTest() {
-        driver.navigate().to("https://www.456bereastreet.com/lab/html5-input-types/");
-        WebElement input = waitAndFindElement(By.id("type-text"));
-
-        input.sendKeys("test");
-    }
-*/
 
     @Test
-    public void toDoListTest() {
+    public void toDoListTest() throws InterruptedException {
         driver.navigate().to("https://todomvc.com/");
-        WebElement reactLink = waitAndFindElement(By.linkText("React New"));
-        reactLink.click();
 
-        WebElement input = waitAndFindElement(By.id("todo-input"));
-        input.sendKeys("test");
-        actions.click(input).sendKeys(Keys.ENTER).perform();
-        WebElement itemsCount = waitAndFindElement(By.className("todo-count"));
-        List<String> items = List.of(itemsCount.getText().split(" "));
-        System.out.println(items.get(0));
-        Assertions.assertEquals(2, Integer.parseInt(items.get(0)));
-    }
-    private WebElement waitAndFindElement(By locator) {
-        return webDriverWait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        mainPage.clickLink("React New");
+
+        todoPage.addItem("Test");
+        todoPage.addItem("Test 2");
+
+        //Thread.sleep(5000);
+
+        todoPage.clickCheckbox("Test 2");
+
+        //Thread.sleep(5000);
+
+        todoPage.assertItemsCount(1);
     }
 
     @AfterEach
