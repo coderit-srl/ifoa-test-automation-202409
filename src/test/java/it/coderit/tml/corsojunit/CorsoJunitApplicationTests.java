@@ -11,6 +11,7 @@ class CorsoJunitApplicationTests {
 
     @BeforeAll
     static void beforeAll() {
+        String s = "TEST";
         System.out.println("CIAO DA BEFORE ALL");
     }
 
