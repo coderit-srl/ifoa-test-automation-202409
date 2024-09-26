@@ -3,6 +3,8 @@ package it.coderit.tml.corsojunit;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import it.coderit.corsi.junit.wsdl.calcolatrice.Calculator;
+
 class CorsoJunitApplicationTests {
 
     int i;
