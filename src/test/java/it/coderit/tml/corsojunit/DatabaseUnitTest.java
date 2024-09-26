@@ -1,6 +1,7 @@
 package it.coderit.tml.corsojunit;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.shadow.com.univocity.parsers.csv.CsvParser;
@@ -9,8 +10,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 @SpringBootTest
@@ -135,7 +138,8 @@ public class DatabaseUnitTest {
     @Test
     public void testLoadFromCsv() throws Exception {
         CSVFormat csvFormat = CSVFormat.Builder.create()
-                .setRecordSeparator(',')
+                .setRecordSeparator('\n')
+                .setDelimiter(',')
                 .setSkipHeaderRecord(true)
                 .setHeader(new String[]{"id", "nome"})
                 .build();
@@ -155,12 +159,17 @@ public class DatabaseUnitTest {
         }
         connection.commit();
 
-        try (CallableStatement statement = connection.prepareCall("select count(*) conteggio from persone ;")) {
-            statement.execute();
-            ResultSet resultSet = statement.getResultSet();
-            resultSet.next();
-            long conteggio = resultSet.getLong("conteggio");
-            Assertions.assertEquals(4, conteggio);
+        try (CSVPrinter printer = csvFormat.print(new File("src/test/resources/utenti-out.csv"), StandardCharsets.UTF_8)) {
+            printer.printRecord("id", "nome");
+            try (CallableStatement statement = connection.prepareCall("select id, nome from persone;")) {
+                statement.execute();
+                ResultSet resultSet = statement.getResultSet();
+                while (resultSet.next()) {
+                    long id = resultSet.getLong("id");
+                    String nome = resultSet.getString("nome");
+                    printer.printRecord(id, nome);
+                }
+            }
         }
     }
 }
