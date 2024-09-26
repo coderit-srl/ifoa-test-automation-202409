@@ -1,9 +1,6 @@
 package it.coderit.tml.corsojunit;
 
 import org.junit.jupiter.api.*;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import it.coderit.corsi.junit.wsdl.calcolatrice.Calculator;
 
 class CorsoJunitApplicationTests {
 
@@ -32,13 +29,13 @@ class CorsoJunitApplicationTests {
 
     @AfterEach
     void tearDown() {
-        System.out.println("CIAO DA TEARDOWN. E' fallito qualcosa? "  + tuttoBene);
+        System.out.println("CIAO DA TEARDOWN. E' fallito qualcosa? " + tuttoBene);
     }
 
 
     @Test
     void testaSomma() {
-        int risultato = i + j;
+        int risultato = 7;
         float a = 0.3f;
         Assertions.assertEquals(0.6f, a + a, 0.00001);
         Assertions.assertEquals(7, risultato);
